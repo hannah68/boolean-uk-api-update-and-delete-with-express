@@ -61,13 +61,46 @@ async function getPetsbyType(req,res){
         const petsTypes = await Pet().getPetsType(type);
         return res.json({ data: petsTypes });
     }
-    
 }
+
+// this edit function works correctly
+// update pet by id or name=====================
+async function edit(req, res){
+    if(req.params.identifier === NaN){
+        // name
+        const updateName = {
+            name: req.params.identifier,
+            ...req.body
+        }
+        const updatedName = await Pet().editByName(updateName)
+        console.log({updatedName});
+        return res.json({data: updatedName})
+    }else{
+        const updatedId = {
+            id: req.params.identifier,
+            ...req.body
+        }
+        const updatedById = await Pet().editById(updatedId)
+        console.log({updatedById});
+        return res.json({data: updatedById})
+    }
+}
+
+// delete one by id===========================
+async function deleteById(req,res){
+    const petToDelete = {
+        id: req.params.id
+    };
+    const thisRes = await Pet().deleteOneById(petToDelete.id);
+    return res.json({ data: thisRes });
+} 
   
 module.exports = {
     createOne,
     getAll,
     getOnePetById,
     getPetsType,
-    getPetsbyType
+    getPetsbyType,
+    edit,
+    deleteById
 };

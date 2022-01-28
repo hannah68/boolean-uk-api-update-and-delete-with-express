@@ -120,6 +120,54 @@ function Pet() {
       .then(result => result.rows)
       .catch(console.error)
   }
+   // update pets by id===========================
+  function editById(pet){
+    const editById = `
+      UPDATE pets
+      SET name = $2,
+      age = $3,
+      type = $4,
+      breed = $5,
+      microchip = $6
+      WHERE id = $1
+      RETURNING *
+    `
+    return db
+      .query(editById, [pet.id, pet.name, pet.age, pet.type, pet.breed, pet.microchip])
+      .then(result => result.rows[0])
+      .catch(console.error)
+  }
+
+  // update pets by name===========================
+  function editByName(pet){
+    const editByName = `
+      UPDATE pets
+      SET age = $2,
+      type = $3,
+      breed = $4,
+      microchip = $5
+      WHERE name = $1
+      RETTURNING *
+    `
+    return db
+      .query(editByName, [pet.name, pet.age, pet.type, pet.breed, pet.microchip])
+      .then(result => result.rows[0])
+      .catch(console.error)
+  }
+
+  // delete one pet by id ============================================
+  function deleteOneById(id){
+    const deleteOneById = `
+      DELETE FROM pets
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+    return db
+      .query(deleteOneById, [id])
+      .then((result) => result.rows[0])
+      .catch(console.error);
+  }
 
   // mock data ==========================================
   function mockData() {
@@ -152,6 +200,9 @@ function Pet() {
     getPetsBreedType,
     getAllPetsWithoutMicrochip,
     getPetsMicrochipType,
+    editByName,
+    editById,
+    deleteOneById,
     init
   };
   

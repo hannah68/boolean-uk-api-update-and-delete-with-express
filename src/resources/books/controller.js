@@ -64,7 +64,36 @@ async function getAuthorBooks(req,res){
     const authorBookRes = await Book().getAuthorBook(author);
     return res.json({data: authorBookRes})
 }
-    
+
+// this edit function gives an error, find the solution??
+// update one by id or title===========================
+async function edit(req,res){
+    if(req.params.identifier === NaN){
+        // string => title
+        const titleToUpdate = {
+            title: req.params.identifier,
+            ...req.body
+        }
+        const updatedTitle = await Book().updateBookByTitle(titleToUpdate);
+        return res.json({data: updatedTitle})
+    }else{
+        const bookToUpdate = {
+            id: req.params.identifier,
+            ...req.body
+        }
+        const updatedBook = await Book().updateBookById(bookToUpdate, res);
+        return res.json({data: updatedBook})
+    }
+}
+
+// delete one by id===========================
+async function deleteById(req,res){
+    const bookToDelete = {
+        id: req.params.id
+    };
+    const thisRes = await Book().deleteOneById(bookToDelete.id);
+    return res.json({ data: thisRes });
+} 
 
 module.exports = {
     createOne,
@@ -72,5 +101,7 @@ module.exports = {
     getOneBookById,
     getFictionBooks,
     getNonFictionBooks,
-    getAuthorBooks
+    getAuthorBooks,
+    edit,
+    deleteById
 };

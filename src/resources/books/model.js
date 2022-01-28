@@ -68,7 +68,7 @@ function Book() {
       const topic = topicOrType.toLowerCase();
       const getTopic= `
         SELECT *
-        FROM BOOKS
+        FROM books
         WHERE topic = $1
       `;
       return db
@@ -80,7 +80,7 @@ function Book() {
       const type = topicOrType.charAt(0).toUpperCase() + topicOrType.slice(1);
       const FictionType = `
         SELECT *
-        FROM BOOKS
+        FROM books
         WHERE type = $1
       `;
       return db
@@ -96,7 +96,7 @@ function Book() {
       const topic = topicOrType.toLowerCase();
       const getTopic= `
         SELECT *
-        FROM BOOKS
+        FROM books
         WHERE topic = $1
       `;
       return db
@@ -108,7 +108,7 @@ function Book() {
       
       const NonFictionType = `
         SELECT *
-        FROM BOOKS
+        FROM books
         WHERE type = $1
       `;
       return db
@@ -122,13 +122,61 @@ function Book() {
   function getAuthorBook(author){
     const authorBook = `
       SELECT *
-      FROM BOOKS
+      FROM books
       WHERE author = $1
       ORDER BY publicationDate DESC;
     `;
     return db
       .query(authorBook, [author])
       .then(result => result.rows)
+      .catch(console.error);
+  }
+
+  // update one book by id============================================
+  function updateBookById(book){
+    const updatedBook = `
+      SET title = $2,
+      type = $3,
+      author = $4,
+      topic = $5,
+      publicationDate = $6
+      WHERE id = $1
+      RETURNING *;
+    `;
+    return db
+    .query(updatedBook, [book.id, book.title, book.type, book.author, book.topic, book.publicationdate])
+    .then((result) => result.rows[0])
+    .catch(console.error);
+  }
+
+  // update one book by title============================================
+  function updateBookByTitle(book){
+    const updatedBook = `
+      UPDATE books
+      SET type = $2,
+      author = $3,
+      topic = $4,
+      publicationDate = $5
+      WHERE title = $1
+      RETURNING *;
+    `;
+    return db
+    .query(updatedBook, [book.title, book.type, book.author, book.topic, book.publicationdate])
+    .then((result) => result.rows[0])
+    .catch(console.error);
+  }
+
+  // delete one book by id ============================================
+  function deleteOneById(id){
+    const deleteOneById = `
+      DELETE FROM books
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+    return db
+      .query(deleteOneById, [id])
+      .then((result) => result.rows[0])
       .catch(console.error);
   }
 
@@ -160,6 +208,9 @@ function Book() {
     getFictionType,
     getNonFictionType,
     getAuthorBook,
+    updateBookById,
+    updateBookByTitle,
+    deleteOneById,
     init
   };
 }
